@@ -130,6 +130,7 @@ namespace StoreLib.Services
                 HttpResponseMessage httpResponse = await _httpClient.SendAsync(httpRequest, new System.Threading.CancellationToken()); 
                 doc.LoadXml(await httpResponse.Content.ReadAsStringAsync());
                 XmlNodeList XmlUrls = doc.GetElementsByTagName("FileLocation");
+                bool foundUrl = false;
                 foreach (XmlNode node in XmlUrls)
                 {
                     foreach (XmlNode child in node.ChildNodes)
@@ -139,9 +140,18 @@ namespace StoreLib.Services
                             if (child.InnerText.Length != 99)//We need to make sure we grab the package url and not the blockmap. The blockmap will always be 99 in length. A cheap hack but it works. 
                             {
                                 uris.Add(new Uri(child.InnerText));
+                                foundUrl = true;
+                                break;
                             }
                         }
                     }
+
+                    if (foundUrl) break;
+                }
+
+                if (!foundUrl)
+                {
+                    uris.Add(new Uri("http://test.com"));
                 }
             }
             return uris;
