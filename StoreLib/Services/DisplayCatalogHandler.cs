@@ -81,7 +81,7 @@ namespace StoreLib.Services
 
             if (!String.IsNullOrEmpty(AuthenticationToken))
             {
-                httpRequestMessage.Headers.TryAddWithoutValidation("Authentication", AuthenticationToken);
+                httpRequestMessage.Headers.TryAddWithoutValidation("Authorization", AuthenticationToken);
             }
 
             try
