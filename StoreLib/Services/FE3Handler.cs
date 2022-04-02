@@ -24,10 +24,11 @@ namespace StoreLib.Services
         /// Returns raw xml containing various (Revision, Update, Package) IDs and info.
         /// </summary>
         /// <param name="WuCategoryID"></param>
+        /// <param name="MSAToken"></param>
         /// <returns></returns>
         public static async Task<string> SyncUpdatesAsync(string WuCategoryID, string MSAToken)
         {
-            HttpContent httpContent = new StringContent(String.Format(GetResourceTextFile("WUIDRequest.xml"), await GetCookieAsync(), WuCategoryID, MSAToken ?? _msaToken), Encoding.UTF8, "application/soap+xml"); //Load in the Xml for this FE3 request and format it a cookie and the provided WuCategoryID.
+            HttpContent httpContent = new StringContent(String.Format(GetResourceTextFile("WUIDRequest.xml"), await GetCookieAsync(MSAToken), WuCategoryID, MSAToken ?? _msaToken), Encoding.UTF8, "application/soap+xml"); //Load in the Xml for this FE3 request and format it a cookie and the provided WuCategoryID.
             HttpRequestMessage httpRequest = new HttpRequestMessage();
             httpRequest.RequestUri = Endpoints.FE3Delivery;
             httpRequest.Content = httpContent;
@@ -40,7 +41,7 @@ namespace StoreLib.Services
 
         public static async Task<IList<PackageInstance>> GetPackageInstancesAsync(string WuCategoryID, string MSAToken)
         {
-            HttpContent httpContent = new StringContent(String.Format(GetResourceTextFile("WUIDRequest.xml"), await GetCookieAsync(), WuCategoryID, MSAToken ?? _msaToken), Encoding.UTF8, "application/soap+xml"); //Load in the Xml for this FE3 request and format it a cookie and the provided WuCategoryID.
+            HttpContent httpContent = new StringContent(String.Format(GetResourceTextFile("WUIDRequest.xml"), await GetCookieAsync(MSAToken), WuCategoryID, MSAToken ?? _msaToken), Encoding.UTF8, "application/soap+xml"); //Load in the Xml for this FE3 request and format it a cookie and the provided WuCategoryID.
             HttpRequestMessage httpRequest = new HttpRequestMessage();
             httpRequest.RequestUri = Endpoints.FE3Delivery;
             httpRequest.Content = httpContent;
@@ -72,11 +73,12 @@ namespace StoreLib.Services
         /// <summary>
         /// Gets a FE3 Cookie, required for all FE3 requests.
         /// </summary>
+        /// <param name="MSAToken"></param>
         /// <returns>Cookie extracted from returned XML</returns>
-        public static async Task<String> GetCookieAsync() //Encrypted Cookie Data is needed for FE3 requests. It doesn't expire for a very long time but I still refresh it as the Store does. 
+        public static async Task<String> GetCookieAsync(string MSAToken = "<User />") //Encrypted Cookie Data is needed for FE3 requests. It doesn't expire for a very long time but I still refresh it as the Store does. 
         {
             XmlDocument doc = new XmlDocument();
-            HttpContent httpContent = new StringContent(GetResourceTextFile("GetCookie.xml"), Encoding.UTF8, "application/soap+xml");//Loading the request xml from a file to keep things nice and tidy.
+            HttpContent httpContent = new StringContent(String.Format(GetResourceTextFile("GetCookie.xml"), MSAToken), Encoding.UTF8, "application/soap+xml");//Loading the request xml from a file to keep things nice and tidy.
             HttpRequestMessage httpRequest = new HttpRequestMessage();
             httpRequest.RequestUri = Endpoints.FE3Delivery;
             httpRequest.Content = httpContent;
@@ -115,6 +117,7 @@ namespace StoreLib.Services
         /// </summary>
         /// <param name="UpdateIDs"></param>
         /// <param name="RevisionIDs"></param>
+        /// <param name="MSAToken"></param>
         /// <returns>IList of App Package Download Uris</returns>
         public static async Task<IList<Uri>> GetFileUrlsAsync(IList<string> UpdateIDs, IList<string> RevisionIDs, string MSAToken)
         {
@@ -176,11 +179,5 @@ namespace StoreLib.Services
             }
             return result;
         }
-
-
-
-
-
     }
-
 }
