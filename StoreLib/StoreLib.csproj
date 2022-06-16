@@ -6,7 +6,7 @@
     <Version>1.2.1</Version>
     <Authors>TitleOS</Authors>
     <Company>N/A</Company>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Description>Storelib is a DotNet library that provides APIs to interact with the various Microsoft Store endpoints.</Description>
     <Copyright>TitleOS</Copyright>
     <PackageProjectUrl>https://github.com/StoreDev/StoreLib</PackageProjectUrl>
